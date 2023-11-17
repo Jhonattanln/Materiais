@@ -66,3 +66,42 @@ resid_panel(multiple_linear_regression)
 resid_xpanel(multiple_linear_regression) # Gráfico de resíduos por variável independente
 
 confint(multiple_linear_regression, level = 0.95) # Intervalos de confiança para os coeficientes
+
+
+##### Regressão Linear Múltipla com Seleção de Variáveis #####
+# Seleção de Variáveis por AIC
+# Backward
+help(step)
+ajuste_back_AIC <- step(multiple_linear_regression, direction = "backward", k=2) # Seleção de variáveis por AIC
+summary(ajuste_back_AIC)
+resid_panel(ajuste_back_AIC)
+resid_xpanel(ajuste_back_AIC)
+
+# Forward
+ajuste_null <- lm(Grad.Rate ~ 1, data = College)
+ajuste_forw_AIC <- step(ajuste_null, direction = "forward", k=2, scope = formula(multiple_linear_regression)) # Seleção de variáveis por AIC
+summary(ajuste_forw_AIC)
+resid_panel(ajuste_forw_AIC)
+resid_xpanel(ajuste_forw_AIC)
+
+# Both
+ajuste_both_AIC <- step(ajuste_null, direction = "both", k=2) # Seleção de variáveis por AIC
+summary(ajuste_both_AIC)
+resid_panel(ajuste_both_AIC)
+resid_xpanel(ajuste_both_AIC)
+                        
+                        
+# Selecionando variáveis por BIC
+# Backward
+k_BIC <- log(nrow(College))
+ajuste_back_BIC <- step(multiple_linear_regression, direction = "backward", k=k_BIC) # Seleção de variáveis por BIC
+summary(ajuste_back_BIC)
+resid_panel(ajuste_back_BIC)
+resid_xpanel(ajuste_back_BIC)
+
+# Forward
+ajuste_fowa_BIC <- step(ajuste_null, direction = "forward", k=k_BIC, scope = formula(multiple_linear_regression)) # Seleção de variáveis por BIC
+summary(ajuste_fowa_BIC)
+resid_panel(ajuste_fowa_BIC)
+resid_xpanel(ajuste_fowa_BIC)
+
