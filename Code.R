@@ -14,6 +14,7 @@ library(ggResidpanel)
 library(ISLR)
 library(ggcorrplot)
 
+
 ##### Carregando Dados #####
 data("College")
 help(College)
@@ -23,25 +24,37 @@ dim(College)
 str(College)
 summary(College)
 
-# Assumindo a variável Grad.Rate como variável resposta
+
+# Assumindo a variável Grad.Rate como variável resposta/independente
 
 ##### Análise Exploratória #####
 
 # Histograma
-ggplot(College, aes(x = Grad.Rate)) + geom_histogram(alpha=0.8, bins = 30, colour= "black", fill='grey') + theme_bw() +
-    labs(x = "Grad.Rate", y = "Frequência") + ggtitle("Histograma da variável Grad.Rate", subtitle = "Dataset College")
+ggplot(College, aes(x = Grad.Rate)) + 
+    geom_histogram(alpha=0.8, bins = 30, colour= "black", fill='grey') + 
+    theme_bw() +
+    labs(x = "Grad.Rate", y = "Frequência") + 
+    ggtitle("Histograma da variável Grad.Rate", subtitle = "Dataset College")
     
 # Gráfico de dispersão
 help(geom_smooth)
-ggplot(College, aes(x = Room.Board, y = Grad.Rate)) + geom_point() + geom_smooth(method = "lm", se = TRUE) + theme_bw() +
-    labs(x = "Grad.Rate", y = "Room.Board") + ggtitle("Gráfico de dispersão da variável Grad.Rate", subtitle = "Dataset College")
+
+ggplot(College, aes(x = Room.Board, y = Grad.Rate)) + 
+    geom_point() + 
+    geom_smooth(method = "lm", se = TRUE) + 
+    theme_bw() +
+    labs(y = "Grad.Rate", x = "Room.Board") + 
+    ggtitle("Gráfico de dispersão da variável Grad.Rate", subtitle = "Dataset College")
 
 ggplot(College, aes(x = Room.Board, y = Grad.Rate)) + geom_point() + geom_smooth(method = "loess", se = TRUE) + theme_bw() +
     labs(x = "Grad.Rate", y = "Room.Board") + ggtitle("Gráfico de dispersão da variável Grad.Rate", subtitle = "Dataset College")
 
 help("ggcorrplot")
-ggcorrplot::ggcorrplot(cor(College[, 2:18]), hc.order = TRUE, type = "lower", lab = TRUE, lab_size = 3, method = "square",
-                       colors = c("red", "blue", "springgreen3"), title = "Correlação entre as variáveis do dataset College")
+
+ggcorrplot::ggcorrplot(cor(College[, 2:18]), hc.order = TRUE, type = "lower", 
+                       lab = TRUE, lab_size = 3, method = "square",
+                       colors = c("red", "blue", "springgreen3"),
+                       title = "Correlação entre as variáveis do dataset College")
 
 
 ##### Regressão Linear Simples #####
@@ -59,6 +72,10 @@ summary(simple_linear_regression_log)
 resid_panel(simple_linear_regression_log)
 
 confint(simple_linear_regression_log, level = 0.95) # Intervalos de confiança para os coeficientes
+
+# Drop Cazenovia College
+College <- College[-which(College$Name == "Cazenovia College"), ]
+
 ##### Regressão Linear Múltipla #####
 multiple_linear_regression <- lm(Grad.Rate ~ ., data = College)
 summary(multiple_linear_regression)
@@ -66,7 +83,7 @@ resid_panel(multiple_linear_regression)
 resid_xpanel(multiple_linear_regression) # Gráfico de resíduos por variável independente
 
 confint(multiple_linear_regression, level = 0.95) # Intervalos de confiança para os coeficientes
-
+help(lm)
 
 ##### Regressão Linear Múltipla com Seleção de Variáveis #####
 # Seleção de Variáveis por AIC
@@ -85,7 +102,7 @@ resid_panel(ajuste_forw_AIC)
 resid_xpanel(ajuste_forw_AIC)
 
 # Both
-ajuste_both_AIC <- step(ajuste_null, direction = "both", k=2) # Seleção de variáveis por AIC
+ajuste_both_AIC <- step(ajuste_null, direction = "both") # Seleção de variáveis por AIC
 summary(ajuste_both_AIC)
 resid_panel(ajuste_both_AIC)
 resid_xpanel(ajuste_both_AIC)
